@@ -1,0 +1,56 @@
+[Unit]
+Description=go_project_demo.admin_api
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+RuntimeDirectory=go_project_demo
+Environment="PID_DIR=/var/run/go_project_demo"
+WorkingDirectory=/root/go_project_demo
+Restart=always
+RestartSec=1
+
+User=www
+Group=www
+
+ExecStart=./admin_api start -c .env -p 3000
+
+# StandardOutput is configured to redirect to journalctl since
+# some error messages may be logged in standard output before
+# elasticsearch logging system is initialized. SearchX
+# stores its logs in /var/log/delicious and does not use
+# journalctl by default. If you also want to enable journalctl
+# logging, you can simply remove the "quiet" option from ExecStart.
+StandardOutput=journal
+StandardError=inherit
+
+# Specifies the maximum file descriptor number that can be opened by this process
+LimitNOFILE=65536
+
+# Specifies the maximum number of processes
+LimitNPROC=4096
+
+# Specifies the maximum size of virtual memory
+LimitAS=infinity
+
+# Specifies the maximum file size
+LimitFSIZE=infinity
+
+# Disable timeout logic and wait until process is stopped
+TimeoutStopSec=0
+
+# SIGTERM signal is used to stop the process
+KillSignal=SIGTERM
+
+# Send the signal only to the JVM rather than its control group
+KillMode=process
+
+SendSIGKILL=no
+
+SuccessExitStatus=143
+
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
